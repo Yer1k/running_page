@@ -1,7 +1,7 @@
 .activityList {
   padding: 20px;
   background-color: rgb(26, 26, 26);
-  color: rgb(224, 237, 94);
+  color: rgb(190, 49, 68);
 }
 
 .filterContainer {
@@ -45,7 +45,7 @@
 .activityName {
   font-size: 1.5em;
   margin-bottom: 10px;
-  color: rgb(224, 237, 94);
+  color: rgb(190, 49, 68);
 }
 
 .activityDetails p {
@@ -54,7 +54,7 @@
 }
 
 .activityDetails strong {
-  color: rgb(224, 237, 94);
+  color: rgb(190, 49, 68);
 }
 
 .chart {
@@ -80,7 +80,7 @@
 }
 
 .smallHomeButton:hover {
-  background-color: rgb(204, 217, 74);
+  background-color: rgb(190, 49, 68);
 }
 
 .lifeContainer {

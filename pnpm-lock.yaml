@@ -54,8 +54,8 @@ dependencies:
     specifier: ^7.1.6
     version: 7.1.6(mapbox-gl@2.15.0)(react-dom@18.2.0)(react@18.2.0)
   react-router-dom:
-    specifier: ^6.15.0
-    version: 6.15.0(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^7.7.1
+    version: 7.7.1(react-dom@18.2.0)(react@18.2.0)
   recharts:
     specifier: ^2.15.2
     version: 2.15.2(react-dom@18.2.0)(react@18.2.0)
@@ -785,11 +785,6 @@ packages:
     resolution: {integrity: sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     dev: true
-
-  /@remix-run/router@1.8.0:
-    resolution: {integrity: sha512-mrfKqIHnSZRyIzBcanNJmVQELTnX+qagEDlcKO90RgRBVOZGSGvZKeDihTRfWcqoDn5N/NkUcwWTccnpN18Tfg==}
-    engines: {node: '>=14.0.0'}
-    dev: false
 
   /@rolldown/pluginutils@1.0.0-beta.19:
     resolution: {integrity: sha512-3FL3mnMbPu0muGOCaKAhhFEYmqv9eTfPSJRJmANrCwtgK8VuxpsZDGK+m0LYAGoyO8+0j5uRe4PeyPDK1yA/hA==}
@@ -1872,6 +1867,11 @@ packages:
 
   /convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+    dev: false
+
+  /cookie@1.0.2:
+    resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
+    engines: {node: '>=18'}
     dev: false
 
   /cosmiconfig@8.2.0:
@@ -3935,27 +3935,32 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /react-router-dom@6.15.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-aR42t0fs7brintwBGAv2+mGlCtgtFQeOzK0BM1/OiqEzRejOZtpMZepvgkscpMUnKb8YO84G7s3LsHnnDNonbQ==}
-    engines: {node: '>=14.0.0'}
+  /react-router-dom@7.7.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-bavdk2BA5r3MYalGKZ01u8PGuDBloQmzpBZVhDLrOOv1N943Wq6dcM9GhB3x8b7AbqPMEezauv4PeGkAJfy7FQ==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      react: '>=16.8'
-      react-dom: '>=16.8'
+      react: '>=18'
+      react-dom: '>=18'
     dependencies:
-      '@remix-run/router': 1.8.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-router: 6.15.0(react@18.2.0)
+      react-router: 7.7.1(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
-  /react-router@6.15.0(react@18.2.0):
-    resolution: {integrity: sha512-NIytlzvzLwJkCQj2HLefmeakxxWHWAP+02EGqWEZy+DgfHHKQMUoBBjUQLOtFInBMhWtb3hiUy6MfFgwLjXhqg==}
-    engines: {node: '>=14.0.0'}
+  /react-router@7.7.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-jVKHXoWRIsD/qS6lvGveckwb862EekvapdHJN/cGmzw40KnJH5gg53ujOJ4qX6EKIK9LSBfFed/xiQ5yeXNrUA==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      react: '>=16.8'
+      react: '>=18'
+      react-dom: '>=18'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
     dependencies:
-      '@remix-run/router': 1.8.0
+      cookie: 1.0.2
       react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      set-cookie-parser: 2.7.1
     dev: false
 
   /react-smooth@4.0.4(react-dom@18.2.0)(react@18.2.0):
@@ -4194,6 +4199,10 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dev: true
+
+  /set-cookie-parser@2.7.1:
+    resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
+    dev: false
 
   /set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}

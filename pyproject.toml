@@ -30,13 +30,14 @@ dependencies = [
   "tzlocal",
   "fit-tool",
   "garmin-fit-sdk",
-  "haversine==2.9.0",
+  "haversine==2.8.0",
   "garth",
   "pycryptodome",
   "duckdb",
   "openai",
   "svglib>=1.5.1",
   "cairosvg>=2.7.1",
+  "certifi==2025.1.31",
 ]
 requires-python = ">=3.12"
 readme = "README.md"

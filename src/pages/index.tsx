@@ -187,20 +187,14 @@ const Index = () => {
         )}
       </div>
       <div className="w-full lg:w-2/3">
-        <div
-          className={`z-10 bg-[var(--color-background)] ${
-            year === 'Total' ? '' : 'sticky top-0'
-          }`}
-        >
-          <RunMap
-            title={title}
-            viewState={viewState}
-            geoData={geoData}
-            setViewState={setViewState}
-            changeYear={changeYear}
-            thisYear={year}
-          />
-        </div>
+        <RunMap
+          title={title}
+          viewState={viewState}
+          geoData={geoData}
+          setViewState={setViewState}
+          changeYear={changeYear}
+          thisYear={year}
+        />
         {year === 'Total' ? (
           <SVGStat />
         ) : (

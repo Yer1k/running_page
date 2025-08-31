@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Analytics } from '@vercel/analytics/react';
+import { Helmet } from 'react-helmet-async';
 import Layout from '@/components/Layout';
 import LocationStat from '@/components/LocationStat';
 import RunMap from '@/components/RunMap';
@@ -24,11 +25,12 @@ import {
   titleForShow,
   RunIds,
 } from '@/utils/utils';
+import { useTheme } from '@/hooks/useTheme';
 
 const Index = () => {
-  const { siteTitle } = useSiteMetadata();
+  const { siteTitle, siteUrl } = useSiteMetadata();
   const { activities, thisYear } = useActivities();
-  const [year, setYear] = useState(thisYear);
+  const [year, setYear] = useState('Total');
   const [runIndex, setRunIndex] = useState(-1);
   const [title, setTitle] = useState('');
   // Animation states for replacing intervalIdRef
@@ -350,11 +352,16 @@ const Index = () => {
     };
   }, [year]);
 
+  const { theme } = useTheme();
+
   return (
     <Layout>
+      <Helmet>
+        <html lang="en" data-theme={theme} />
+      </Helmet>
       <div className="w-full lg:w-1/3">
         <h1 className="my-12 mt-6 text-5xl font-extrabold italic">
-          <a href="/">{siteTitle}</a>
+          <a href={siteUrl}>{siteTitle}</a>
         </h1>
         {(viewState.zoom ?? 0) <= 3 && IS_CHINESE ? (
           <LocationStat

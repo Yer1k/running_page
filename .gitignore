@@ -44,3 +44,6 @@ route.png
 route.svg
 
 __pycache__
+
+# Claude instructions
+CLAUDE.md

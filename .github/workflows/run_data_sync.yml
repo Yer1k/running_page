@@ -22,6 +22,12 @@ on:
       - run_page/keep_to_strava_sync.py
       - run_page/oppo_sync.py
       - requirements.txt
+      - src/**
+      - vite.config.ts
+      - package.json
+      - pnpm-lock.yaml
+      - tsconfig.json
+      - .github/workflows/gh-pages.yml
 
 env:
   # please change to your own config.

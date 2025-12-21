@@ -52,6 +52,11 @@ const RICH_TITLE = true;
 
 // IF you are outside China please make sure IS_CHINESE = false
 const IS_CHINESE = false;
+
+// Enable location-based features (province/state highlighting on map)
+// Set to true to show geographic boundaries when zoomed out
+const ENABLE_LOCATION_FEATURES = true;
+
 const USE_ANIMATION_FOR_GRID = true;
 const CHINESE_INFO_MESSAGE = (yearLength: number, year: string): string => {
   const yearStr = year === 'Total' ? '所有' : ` ${year} `;
@@ -60,10 +65,22 @@ const CHINESE_INFO_MESSAGE = (yearLength: number, year: string): string => {
 const ENGLISH_INFO_MESSAGE = (yearLength: number): string =>
   `The first recorded run dates back ${yearLength - 1} years`;
 
-// English is not supported for location info messages yet
+// Location info messages
 const CHINESE_LOCATION_INFO_MESSAGE_FIRST =
   '跑过了一些地方，希望随着时间推移，点亮的地方越来越多';
 const CHINESE_LOCATION_INFO_MESSAGE_SECOND = '不要停下来，不要停下奔跑的脚步';
+
+const ENGLISH_LOCATION_INFO_MESSAGE_FIRST =
+  "I've run in some places, and I hope to light up more as time goes by";
+const ENGLISH_LOCATION_INFO_MESSAGE_SECOND =
+  "Don't stop running, keep moving forward";
+
+const LOCATION_INFO_MESSAGE_FIRST = IS_CHINESE
+  ? CHINESE_LOCATION_INFO_MESSAGE_FIRST
+  : ENGLISH_LOCATION_INFO_MESSAGE_FIRST;
+const LOCATION_INFO_MESSAGE_SECOND = IS_CHINESE
+  ? CHINESE_LOCATION_INFO_MESSAGE_SECOND
+  : ENGLISH_LOCATION_INFO_MESSAGE_SECOND;
 
 const INFO_MESSAGE = IS_CHINESE ? CHINESE_INFO_MESSAGE : ENGLISH_INFO_MESSAGE;
 const FULL_MARATHON_RUN_TITLE = IS_CHINESE ? '全程马拉松' : 'Full Marathon';
@@ -145,10 +162,13 @@ export {
   GOOGLE_ANALYTICS_TRACKING_ID,
   CHINESE_LOCATION_INFO_MESSAGE_FIRST,
   CHINESE_LOCATION_INFO_MESSAGE_SECOND,
+  LOCATION_INFO_MESSAGE_FIRST,
+  LOCATION_INFO_MESSAGE_SECOND,
   MAPBOX_TOKEN,
   MUNICIPALITY_CITIES_ARR,
   MAP_LAYER_LIST,
   IS_CHINESE,
+  ENABLE_LOCATION_FEATURES,
   ROAD_LABEL_DISPLAY,
   INFO_MESSAGE,
   RUN_TITLES,
@@ -214,6 +234,24 @@ export const getRuntimeSingleRunColor = (): string => {
     (!dataTheme && !savedTheme);
 
   return isDark ? SINGLE_RUN_COLOR_DARK : SINGLE_RUN_COLOR_LIGHT;
+};
+
+// Helper function to get theme-aware province/state fill color
+export const getRuntimeProvinceFillColor = (): string => {
+  if (typeof window === 'undefined') return MAIN_COLOR;
+
+  const dataTheme = document.documentElement.getAttribute('data-theme');
+  const savedTheme = localStorage.getItem('theme');
+
+  // Determine current theme (default to dark)
+  const isDark =
+    dataTheme === 'dark' ||
+    (!dataTheme && savedTheme === 'dark') ||
+    (!dataTheme && !savedTheme);
+
+  // Dark theme: use Nike yellow for high visibility
+  // Light theme: use cyan
+  return isDark ? MAIN_COLOR : PROVINCE_FILL_COLOR;
 };
 
 // Legacy export for backwards compatibility

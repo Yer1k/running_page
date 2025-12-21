@@ -10,7 +10,7 @@ import YearsStat from '@/components/YearsStat';
 import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { useInterval } from '@/hooks/useInterval';
-import { IS_CHINESE } from '@/utils/const';
+import { IS_CHINESE, ENABLE_LOCATION_FEATURES } from '@/utils/const';
 import {
   Activity,
   IViewState,
@@ -379,7 +379,7 @@ const Index = () => {
         <h1 className="my-12 mt-6 text-5xl font-extrabold italic">
           <a href={siteUrl}>{siteTitle}</a>
         </h1>
-        {(viewState.zoom ?? 0) <= 3 && IS_CHINESE ? (
+        {(viewState.zoom ?? 0) <= 3 && ENABLE_LOCATION_FEATURES ? (
           <LocationStat
             changeYear={changeYear}
             changeCity={changeCity}

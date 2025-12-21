@@ -3,6 +3,7 @@ import gcoord from 'gcoord';
 import { WebMercatorViewport } from '@math.gl/web-mercator';
 import { RPGeometry } from '@/static/run_countries';
 import { chinaCities } from '@/static/city';
+import { US_STATES, US_CITIES, CITY_TO_STATE } from '@/static/us_locations';
 import {
   MAIN_COLOR,
   MUNICIPALITY_CITIES_ARR,
@@ -113,6 +114,34 @@ const extractCities = (str: string): string[] => {
   return locations;
 };
 
+// Extract US city from location string (handles Chinese names)
+const extractUSCity = (location: string): { city: string; state: string } => {
+  let city = '';
+  let state = '';
+
+  // Check for US state names (Chinese)
+  for (const [chineseName, englishName] of Object.entries(US_STATES)) {
+    if (location.includes(chineseName)) {
+      state = englishName;
+      break;
+    }
+  }
+
+  // Check for US city names (Chinese)
+  for (const [chineseName, englishName] of Object.entries(US_CITIES)) {
+    if (location.includes(chineseName)) {
+      city = englishName;
+      // If state not found yet, try to infer from city
+      if (!state && CITY_TO_STATE[englishName]) {
+        state = CITY_TO_STATE[englishName];
+      }
+      break;
+    }
+  }
+
+  return { city, state };
+};
+
 const extractDistricts = (str: string): string[] => {
   const locations = [];
   let match;
@@ -155,41 +184,55 @@ const locationForRun = (
   let [city, province, country] = ['', '', ''];
   let coordinate = null;
   if (location) {
-    // Only for Chinese now
-    // should filter 臺灣
-    const cityMatch = extractCities(location);
-    const provinceMatch = location.match(/[\u4e00-\u9fa5]{2,}(省|自治区)/);
+    // Check if it's a US location first
+    const isUSLocation = location.includes('美利坚合众国') || location.includes('美利堅合眾國');
 
-    if (cityMatch) {
-      city = cities.find((value) => cityMatch.includes(value)) as string;
-
-      if (!city) {
-        city = '';
-      }
-    }
-    if (provinceMatch) {
-      [province] = provinceMatch;
-      // try to extract city coord from location_country info
+    if (isUSLocation) {
+      // Extract US city and state
+      const usLocation = extractUSCity(location);
+      city = usLocation.city;
+      province = usLocation.state;  // Use state as province for consistency
+      country = 'United States';
+      // Try to extract coordinates
       coordinate = extractCoordinate(location);
-    }
-    const l = location.split(',');
-    // or to handle keep location format
-    let countryMatch = l[l.length - 1].match(
-      /[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/
-    );
-    if (!countryMatch && l.length >= 3) {
-      countryMatch = l[2].match(/[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/);
-    }
-    if (countryMatch) {
-      [country] = countryMatch;
-    }
-  }
-  if (MUNICIPALITY_CITIES_ARR.includes(city)) {
-    province = city;
-    if (location) {
-      const districtMatch = extractDistricts(location);
-      if (districtMatch.length > 0) {
-        city = districtMatch[districtMatch.length - 1];
+    } else {
+      // Original Chinese location parsing
+      // should filter 臺灣
+      const cityMatch = extractCities(location);
+      const provinceMatch = location.match(/[\u4e00-\u9fa5]{2,}(省|自治区)/);
+
+      if (cityMatch) {
+        city = chinaCities.find((value) => cityMatch.includes(value)) as string;
+
+        if (!city) {
+          city = '';
+        }
+      }
+      if (provinceMatch) {
+        [province] = provinceMatch;
+        // try to extract city coord from location_country info
+        coordinate = extractCoordinate(location);
+      }
+      const l = location.split(',');
+      // or to handle keep location format
+      let countryMatch = l[l.length - 1].match(
+        /[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/
+      );
+      if (!countryMatch && l.length >= 3) {
+        countryMatch = l[2].match(/[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/);
+      }
+      if (countryMatch) {
+        [country] = countryMatch;
+      }
+
+      if (MUNICIPALITY_CITIES_ARR.includes(city)) {
+        province = city;
+        if (location) {
+          const districtMatch = extractDistricts(location);
+          if (districtMatch.length > 0) {
+            city = districtMatch[districtMatch.length - 1];
+          }
+        }
       }
     }
   }
@@ -275,9 +318,10 @@ const geoJsonForRuns = (runs: Activity[]): FeatureCollection<LineString> => ({
 });
 
 const geoJsonForMap = async (): Promise<FeatureCollection<RPGeometry>> => {
-  const [{ chinaGeojson }, worldGeoJson] = await Promise.all([
+  const [{ chinaGeojson }, worldGeoJson, usStatesGeoJson] = await Promise.all([
     import('@/static/run_countries'),
     import('@surbowl/world-geo-json-zh/world.zh.json'),
+    import('@/static/us_states.json'),
   ]);
 
   return {
@@ -285,6 +329,7 @@ const geoJsonForMap = async (): Promise<FeatureCollection<RPGeometry>> => {
     features: [
       ...worldGeoJson.default.features,
       ...chinaGeojson.features,
+      ...usStatesGeoJson.default.features,
     ] as Feature<RPGeometry, GeoJsonProperties>[],
   };
 };
@@ -315,6 +360,29 @@ const getActivitySport = (act: Activity): string => {
     return ACTIVITY_TYPES.SKIING_TITLE;
   }
   return '';
+};
+
+// Get time of day period for a run (for categorization with emojis)
+const timeOfDayForRun = (run: Activity): string => {
+  const runHour = +run.start_date_local.slice(11, 13);
+
+  if (runHour >= 5 && runHour < 7) {
+    return '🌄 Dawn';
+  }
+  if (runHour >= 7 && runHour < 10) {
+    return '🌅 Morning';
+  }
+  if (runHour >= 10 && runHour < 14) {
+    return '☀️ Midday';
+  }
+  if (runHour >= 14 && runHour < 17) {
+    return '🌤️ Afternoon';
+  }
+  if (runHour >= 17 && runHour < 20) {
+    return '🌆 Evening';
+  }
+  // Night: 8pm-5am (20:00-05:00)
+  return '🌙 Night';
 };
 
 const titleForRun = (run: Activity): string => {
@@ -492,6 +560,7 @@ export {
   geoJsonForRuns,
   geoJsonForMap,
   titleForRun,
+  timeOfDayForRun,
   filterYearRuns,
   filterCityRuns,
   filterTitleRuns,

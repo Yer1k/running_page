@@ -229,7 +229,12 @@ const RunMap = ({
   const isBigMap = (viewState.zoom ?? 0) <= 3;
 
   useEffect(() => {
-    if (isBigMap && ENABLE_LOCATION_FEATURES && !mapGeoData && !isLoadingMapData) {
+    if (
+      isBigMap &&
+      ENABLE_LOCATION_FEATURES &&
+      !mapGeoData &&
+      !isLoadingMapData
+    ) {
       setIsLoadingMapData(true);
       geoJsonForMap()
         .then((data) => {

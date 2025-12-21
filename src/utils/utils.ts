@@ -184,13 +184,14 @@ const locationForRun = (
   let coordinate = null;
   if (location) {
     // Check if it's a US location first
-    const isUSLocation = location.includes('美利坚合众国') || location.includes('美利堅合眾國');
+    const isUSLocation =
+      location.includes('美利坚合众国') || location.includes('美利堅合眾國');
 
     if (isUSLocation) {
       // Extract US city and state
       const usLocation = extractUSCity(location);
       city = usLocation.city;
-      province = usLocation.state;  // Use state as province for consistency
+      province = usLocation.state; // Use state as province for consistency
       country = 'United States';
       // Try to extract coordinates
       coordinate = extractCoordinate(location);

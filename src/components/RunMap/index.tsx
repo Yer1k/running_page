@@ -17,6 +17,7 @@ import { MapInstance } from 'react-map-gl/src/types/lib';
 import useActivities from '@/hooks/useActivities';
 import {
   IS_CHINESE,
+  ENABLE_LOCATION_FEATURES,
   ROAD_LABEL_DISPLAY,
   MAPBOX_TOKEN,
   PROVINCE_FILL_COLOR,
@@ -29,6 +30,7 @@ import {
   MAP_TILE_VENDOR,
   MAP_TILE_ACCESS_TOKEN,
   getRuntimeSingleRunColor,
+  getRuntimeProvinceFillColor,
 } from '@/utils/const';
 import {
   Coordinate,
@@ -83,6 +85,12 @@ const RunMap = ({
   // Get theme-aware single run color that updates when theme changes
   const singleRunColor = useMemo(
     () => getRuntimeSingleRunColor(),
+    [themeChangeCounter]
+  );
+
+  // Get theme-aware province/state fill color that updates when theme changes
+  const provinceFillColor = useMemo(
+    () => getRuntimeProvinceFillColor(),
     [themeChangeCounter]
   );
 
@@ -222,7 +230,7 @@ const RunMap = ({
   const isBigMap = (viewState.zoom ?? 0) <= 3;
 
   useEffect(() => {
-    if (isBigMap && IS_CHINESE && !mapGeoData && !isLoadingMapData) {
+    if (isBigMap && ENABLE_LOCATION_FEATURES && !mapGeoData && !isLoadingMapData) {
       setIsLoadingMapData(true);
       geoJsonForMap()
         .then((data) => {
@@ -233,10 +241,10 @@ const RunMap = ({
           setIsLoadingMapData(false);
         });
     }
-  }, [isBigMap, IS_CHINESE, mapGeoData, isLoadingMapData]);
+  }, [isBigMap, mapGeoData, isLoadingMapData]);
 
   let combinedGeoData = geoData;
-  if (isBigMap && IS_CHINESE && mapGeoData) {
+  if (isBigMap && ENABLE_LOCATION_FEATURES && mapGeoData) {
     // Show boundary and line together, combine geoData(only when not combine yet)
     if (geoData.features.length === initGeoDataLength) {
       combinedGeoData = {
@@ -378,7 +386,7 @@ const RunMap = ({
           id="province"
           type="fill"
           paint={{
-            'fill-color': PROVINCE_FILL_COLOR,
+            'fill-color': provinceFillColor,
           }}
           filter={filterProvinces}
         />

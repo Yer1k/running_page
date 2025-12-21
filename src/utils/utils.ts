@@ -166,7 +166,6 @@ const extractCoordinate = (str: string): [number, number] | null => {
   return null;
 };
 
-const cities = chinaCities.map((c) => c.name);
 const locationCache = new Map<number, ReturnType<typeof locationForRun>>();
 // what about oversea?
 const locationForRun = (

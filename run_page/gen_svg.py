@@ -237,6 +237,7 @@ def main():
 
     is_circular = args.type == "circular"
     is_mol = args.type == "monthoflife"
+    is_year_summary = args.type == "year_summary"
 
     if not is_circular and not is_mol:
         print(
@@ -291,6 +292,16 @@ def main():
             # may be refactor
             p.set_tracks(tracks)
             p.draw(drawers[args.type], os.path.join(output_dir, f"year_{str(y)}.svg"))
+    elif is_year_summary and args.summary_year is None:
+        # Generate year summary for all years when --summary-year is not specified
+        years = p.years.all()[:]
+        output_dir = os.path.dirname(args.output) or "assets"
+        for y in years:
+            drawers[args.type].year = y
+            p.draw(
+                drawers[args.type],
+                os.path.join(output_dir, f"year_summary_{str(y)}.svg"),
+            )
     else:
         p.draw(drawers[args.type], args.output)
 

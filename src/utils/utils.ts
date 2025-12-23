@@ -1,6 +1,10 @@
 import * as mapboxPolyline from '@mapbox/polyline';
 import gcoord from 'gcoord';
 import { WebMercatorViewport } from '@math.gl/web-mercator';
+import { pinyin } from 'pinyin-pro';
+import countries from 'i18n-iso-countries';
+import zhLocale from 'i18n-iso-countries/langs/zh.json';
+import enLocale from 'i18n-iso-countries/langs/en.json';
 import { RPGeometry } from '@/static/run_countries';
 import { chinaCities } from '@/static/city';
 import { US_STATES, US_CITIES, CITY_TO_STATE } from '@/static/us_locations';
@@ -166,6 +170,125 @@ const extractCoordinate = (str: string): [number, number] | null => {
   return null;
 };
 
+// Initialize i18n-iso-countries
+countries.registerLocale(zhLocale);
+countries.registerLocale(enLocale);
+
+// Build a city name translation cache from known city data
+const buildCityTranslationMap = (): Map<string, string> => {
+  const cityMap = new Map<string, string>();
+
+  // Add well-known cities with special names
+  const wellKnownCities: Record<string, string> = {
+    // Special administrative regions
+    香港: 'Hong Kong',
+    澳门: 'Macau',
+    澳門: 'Macau',
+
+    // International cities
+    哥本哈根: 'Copenhagen',
+    旧金山: 'San Francisco',
+    舊金山: 'San Francisco',
+    三藩市: 'San Francisco',
+    纽约: 'New York',
+    紐約: 'New York',
+    洛杉矶: 'Los Angeles',
+    洛杉磯: 'Los Angeles',
+    芝加哥: 'Chicago',
+    西雅图: 'Seattle',
+    波士顿: 'Boston',
+    费城: 'Philadelphia',
+    东京: 'Tokyo',
+    東京: 'Tokyo',
+    伦敦: 'London',
+    倫敦: 'London',
+    巴黎: 'Paris',
+    柏林: 'Berlin',
+    罗马: 'Rome',
+    羅馬: 'Rome',
+    悉尼: 'Sydney',
+    雪梨: 'Sydney',
+    墨尔本: 'Melbourne',
+    多伦多: 'Toronto',
+    温哥华: 'Vancouver',
+    溫哥華: 'Vancouver',
+
+    // Chinese autonomous prefectures
+    红河哈尼族彝族自治州: 'Honghe Hani and Yi Autonomous Prefecture',
+    大理白族自治州: 'Dali Bai Autonomous Prefecture',
+    西双版纳傣族自治州: 'Xishuangbanna Dai Autonomous Prefecture',
+    楚雄彝族自治州: 'Chuxiong Yi Autonomous Prefecture',
+    怒江傈僳族自治州: 'Nujiang Lisu Autonomous Prefecture',
+    迪庆藏族自治州: 'Diqing Tibetan Autonomous Prefecture',
+    文山壮族苗族自治州: 'Wenshan Zhuang and Miao Autonomous Prefecture',
+    德宏傣族景颇族自治州: 'Dehong Dai and Jingpo Autonomous Prefecture',
+    延边朝鲜族自治州: 'Yanbian Korean Autonomous Prefecture',
+    甘孜藏族自治州: 'Garze Tibetan Autonomous Prefecture',
+    阿坝藏族羌族自治州: 'Ngawa Tibetan and Qiang Autonomous Prefecture',
+    凉山彝族自治州: 'Liangshan Yi Autonomous Prefecture',
+  };
+
+  Object.entries(wellKnownCities).forEach(([zh, en]) => {
+    cityMap.set(zh, en);
+    // Also store without 市 suffix
+    cityMap.set(zh.replace('市', ''), en);
+  });
+
+  return cityMap;
+};
+
+const cityTranslationMap = buildCityTranslationMap();
+
+// Helper function to translate country name from Chinese to English
+const translateCountry = (chineseCountry: string): string => {
+  // Try to get country code from Chinese name
+  const countryCode = countries.getAlpha2Code(chineseCountry, 'zh');
+  if (countryCode) {
+    return countries.getName(countryCode, 'en') || chineseCountry;
+  }
+
+  // Fallback to pinyin
+  return toPinyinName(chineseCountry);
+};
+
+// Helper function to translate city name from Chinese to English
+const translateCity = (chineseCity: string): string => {
+  // Remove common suffixes for lookup
+  const cleanCity = chineseCity
+    .replace(/市$/, '')
+    .replace(/省$/, '')
+    .replace(/自治区$/, '');
+
+  // Check translation map first
+  if (cityTranslationMap.has(chineseCity)) {
+    return cityTranslationMap.get(chineseCity)!;
+  }
+  if (cityTranslationMap.has(cleanCity)) {
+    return cityTranslationMap.get(cleanCity)!;
+  }
+
+  // Fallback to pinyin with proper formatting
+  return toPinyinName(chineseCity);
+};
+
+// Helper function to convert Chinese text to properly formatted pinyin
+const toPinyinName = (chineseText: string): string => {
+  // Remove common suffixes
+  const withoutSuffix = chineseText
+    .replace(/市$/, '')
+    .replace(/省$/, '')
+    .replace(/自治区$/, '')
+    .replace(/特别行政区$/, '');
+
+  // Convert to pinyin without spaces and capitalize first letter
+  const pinyinArray = pinyin(withoutSuffix, {
+    toneType: 'none',
+    type: 'array',
+  });
+  const combined = pinyinArray.join('');
+  return combined.charAt(0).toUpperCase() + combined.slice(1);
+};
+
 const locationCache = new Map<number, ReturnType<typeof locationForRun>>();
 // what about oversea?
 const locationForRun = (
@@ -182,11 +305,12 @@ const locationForRun = (
   let location = run.location_country;
   let [city, province, country] = ['', '', ''];
   let coordinate = null;
-  if (location) {
-    // Check if it's a US location first
-    const isUSLocation =
-      location.includes('美利坚合众国') || location.includes('美利堅合眾國');
+  // Check if it's a US location first
+  const isUSLocation =
+    location &&
+    (location.includes('美利坚合众国') || location.includes('美利堅合眾國'));
 
+  if (location) {
     if (isUSLocation) {
       // Extract US city and state
       const usLocation = extractUSCity(location);
@@ -202,17 +326,31 @@ const locationForRun = (
       const provinceMatch = location.match(/[\u4e00-\u9fa5]{2,}(省|自治区)/);
 
       if (cityMatch) {
-        city = chinaCities.find((value) => cityMatch.includes(value)) as string;
-
-        if (!city) {
-          city = '';
-        }
+        const cityObj = chinaCities.find((value) =>
+          cityMatch.includes(value.name)
+        );
+        city = cityObj ? cityObj.name : '';
       }
       if (provinceMatch) {
         [province] = provinceMatch;
         // try to extract city coord from location_country info
         coordinate = extractCoordinate(location);
       }
+
+      // For international cities (no province), try to extract Chinese city name
+      if (!province && !city) {
+        const parts = location.split(',').map((p) => p.trim());
+        // Find a Chinese character sequence that could be the city
+        for (const part of parts) {
+          const chineseMatch = part.match(/^[\u4e00-\u9fa5]{2,}$/);
+          if (chineseMatch && !part.match(/[\u4e00-\u9fa5]*[省市区县]/)) {
+            // Found Chinese characters without province/city/district suffix
+            city = part;
+            break;
+          }
+        }
+      }
+
       const l = location.split(',');
       // or to handle keep location format
       let countryMatch = l[l.length - 1].match(
@@ -234,6 +372,40 @@ const locationForRun = (
           }
         }
       }
+    }
+  }
+
+  // Translate city and country to English (keep province in Chinese for map filtering!)
+  if (!isUSLocation && location) {
+    // Translate city
+    if (city) {
+      // Check if province is a municipality city (直辖市) - for these, show city level not district
+      if (province && MUNICIPALITY_CITIES_ARR.includes(province)) {
+        // For municipality cities, use the province (which is the city name) instead of district
+        city = translateCity(province);
+      }
+      // Check if it's a district (ends with 区), show parent city instead
+      else if (city.endsWith('区')) {
+        // Parse location string to find parent city (ends with 市)
+        const parts = location.split(',').map((p) => p.trim());
+        const parentCity = parts.find((p) => p.endsWith('市'));
+        if (parentCity) {
+          // Use parent city name, translate it
+          city = translateCity(parentCity);
+        } else {
+          // No parent city found, just translate the district name
+          city = translateCity(city);
+        }
+      }
+      // Normal city translation (handles autonomous prefectures via translation map)
+      else {
+        city = translateCity(city);
+      }
+    }
+
+    // Translate country (keep province in Chinese for map filtering!)
+    if (country) {
+      country = translateCountry(country);
     }
   }
 

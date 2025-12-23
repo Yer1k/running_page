@@ -1,8 +1,14 @@
 {
   "git": {
     "deploymentEnabled": {
-      "gh-pages": false
+      "gh-pages": false,
+      "master": true
     }
+  },
+  "github": {
+    "silent": false,
+    "autoAlias": true,
+    "autoJobCancelation": true
   },
   "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }

@@ -315,6 +315,17 @@ const ActivityList: React.FC = () => {
   const [interval, setInterval] = useState<IntervalType>('month');
   const [sportType, setSportType] = useState<string>('all');
   const [sportTypeOptions, setSportTypeOptions] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+
+  // Get available years from activities
+  const availableYears = useMemo(() => {
+    const years = new Set<string>();
+    activities.forEach((activity) => {
+      const year = new Date(activity.start_date_local).getFullYear().toString();
+      years.add(year);
+    });
+    return Array.from(years).sort((a, b) => Number(b) - Number(a));
+  }, []);
 
   // Keyboard navigation for year selection in Life view
   useEffect(() => {

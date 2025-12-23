@@ -237,6 +237,7 @@ def main():
 
     is_circular = args.type == "circular"
     is_mol = args.type == "monthoflife"
+    is_year_summary = args.type == "year_summary"
 
     if not is_circular and not is_mol:
         print(

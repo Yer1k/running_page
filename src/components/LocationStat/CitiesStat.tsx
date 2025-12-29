@@ -1,5 +1,6 @@
 import Stat from '@/components/Stat';
 import useActivities from '@/hooks/useActivities';
+import { translateCityName } from '@/utils/cityTranslation';
 
 // only support China for now
 const CitiesStat = ({ onClick }: { onClick: (_city: string) => void }) => {
@@ -13,7 +14,7 @@ const CitiesStat = ({ onClick }: { onClick: (_city: string) => void }) => {
         {citiesArr.map(([city, distance]) => (
           <Stat
             key={city}
-            value={city}
+            value={translateCityName(city)}
             description={` ${(distance / 1000).toFixed(0)} KM`}
             citySize={3}
             onClick={() => onClick(city)}

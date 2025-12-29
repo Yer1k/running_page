@@ -86,7 +86,6 @@ export const CITY_NAME_TRANSLATIONS: Record<string, string> = {
   大庆市: 'Daqing',
   齐齐哈尔市: 'Qiqihar',
   包头市: 'Baotou',
-  银川市: 'Yinchuan',
 
   // Autonomous prefectures and other administrative divisions
   红河哈尼族彝族自治州: 'Honghe',

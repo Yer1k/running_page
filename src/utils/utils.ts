@@ -141,7 +141,7 @@ const extractUSCity = (location: string): { city: string; state: string } => {
 
   // If city not found via Chinese name, try English city names
   if (!city) {
-    for (const [chineseName, englishName] of Object.entries(US_CITIES)) {
+    for (const [_chineseName, englishName] of Object.entries(US_CITIES)) {
       if (location.includes(englishName)) {
         city = englishName;
         // If state not found yet, try to infer from city
@@ -156,7 +156,7 @@ const extractUSCity = (location: string): { city: string; state: string } => {
   return { city, state };
 };
 
-const extractDistricts = (str: string): string[] => {
+const _extractDistricts = (str: string): string[] => {
   const locations = [];
   let match;
   const pattern = /([\u4e00-\u9fa5]{2,}(区|县))/g;

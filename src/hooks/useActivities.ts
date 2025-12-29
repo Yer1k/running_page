@@ -4,8 +4,11 @@ import activities from '@/static/activities.json';
 
 // standardize country names for consistency between mapbox and activities data
 const standardizeCountryName = (country: string): string => {
-  // Normalize spacing and variations
-  const normalized = country.replace(/\s*\/\s*/g, '/').trim();
+  // Normalize spacing and variations, and split on semicolons to get first variant
+  const normalized = country
+    .replace(/\s*\/\s*/g, '/')
+    .split(';')[0]
+    .trim();
 
   if (
     normalized.includes('美利坚合众国') ||

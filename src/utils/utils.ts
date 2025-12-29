@@ -159,6 +159,9 @@ const extractUSCity = (location: string): { city: string; state: string } => {
       'Table Rock State Park': 'Greenville', // Pickens County, SC
       'Brier Creek': 'Raleigh', // Wake County, NC
       'Newfound Gap': 'Gatlinburg', // Sevier County, TN
+      'Boone Fork': 'Boone', // Watauga County, NC
+      'Mount Mitchell': 'Burnsville', // Yancey County, NC
+      'Deep Gap': 'Burnsville', // Yancey County, NC
     };
 
     for (const [locationName, nearestCity] of Object.entries(
@@ -220,9 +223,11 @@ const locationForRun = (
   let [city, province, country] = ['', '', ''];
   let coordinate = null;
   if (location) {
-    // Check if it's a US location first
+    // Check if it's a US location first (check both long and short forms)
     const isUSLocation =
-      location.includes('美利坚合众国') || location.includes('美利堅合眾國');
+      location.includes('美利坚合众国') ||
+      location.includes('美利堅合眾國') ||
+      location.includes('美国');
 
     if (isUSLocation) {
       // Extract US city and state

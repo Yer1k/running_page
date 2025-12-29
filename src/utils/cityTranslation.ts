@@ -1,0 +1,164 @@
+// Simple city and country name translations for display purposes only
+// This does not affect internal processing or map highlighting
+
+export const COUNTRY_NAME_TRANSLATIONS: Record<string, string> = {
+  美国: 'United States',
+  中国: 'China',
+  丹麦: 'Denmark',
+  英国: 'United Kingdom',
+  印度尼西亚: 'Indonesia',
+  韩国: 'South Korea',
+  斯里兰卡: 'Sri Lanka',
+  所罗门群岛: 'Solomon Islands',
+  拉脱维亚: 'Latvia',
+  爱沙尼亚: 'Estonia',
+  奥地利: 'Austria',
+  澳大利亚: 'Australia',
+};
+
+export const CITY_NAME_TRANSLATIONS: Record<string, string> = {
+  // Municipalities
+  北京市: 'Beijing',
+  上海市: 'Shanghai',
+  天津市: 'Tianjin',
+  重庆市: 'Chongqing',
+
+  // Major cities
+  成都市: 'Chengdu',
+  广州市: 'Guangzhou',
+  深圳市: 'Shenzhen',
+  杭州市: 'Hangzhou',
+  武汉市: 'Wuhan',
+  西安市: "Xi'an",
+  苏州市: 'Suzhou',
+  郑州市: 'Zhengzhou',
+  南京市: 'Nanjing',
+  济南市: 'Jinan',
+  青岛市: 'Qingdao',
+  长沙市: 'Changsha',
+  哈尔滨市: 'Harbin',
+  沈阳市: 'Shenyang',
+  昆明市: 'Kunming',
+  大连市: 'Dalian',
+  厦门市: 'Xiamen',
+  合肥市: 'Hefei',
+  福州市: 'Fuzhou',
+  石家庄市: 'Shijiazhuang',
+  南昌市: 'Nanchang',
+  长春市: 'Changchun',
+  贵阳市: 'Guiyang',
+  太原市: 'Taiyuan',
+  南宁市: 'Nanning',
+  兰州市: 'Lanzhou',
+  乌鲁木齐市: 'Urumqi',
+  海口市: 'Haikou',
+  银川市: 'Yinchuan',
+  呼和浩特市: 'Hohhot',
+  拉萨市: 'Lhasa',
+  西宁市: 'Xining',
+  东莞市: 'Dongguan',
+  佛山市: 'Foshan',
+  无锡市: 'Wuxi',
+  宁波市: 'Ningbo',
+  温州市: 'Wenzhou',
+  珠海市: 'Zhuhai',
+  中山市: 'Zhongshan',
+  惠州市: 'Huizhou',
+  泉州市: 'Quanzhou',
+  常州市: 'Changzhou',
+  徐州市: 'Xuzhou',
+  南通市: 'Nantong',
+  扬州市: 'Yangzhou',
+  绍兴市: 'Shaoxing',
+  烟台市: 'Yantai',
+  威海市: 'Weihai',
+  淄博市: 'Zibo',
+  潍坊市: 'Weifang',
+  台州市: 'Taizhou',
+  嘉兴市: 'Jiaxing',
+  金华市: 'Jinhua',
+  湖州市: 'Huzhou',
+  舟山市: 'Zhoushan',
+  镇江市: 'Zhenjiang',
+  盐城市: 'Yancheng',
+  连云港市: 'Lianyungang',
+  芜湖市: 'Wuhu',
+  保定市: 'Baoding',
+  唐山市: 'Tangshan',
+  秦皇岛市: 'Qinhuangdao',
+  邯郸市: 'Handan',
+  洛阳市: 'Luoyang',
+  开封市: 'Kaifeng',
+  安阳市: 'Anyang',
+  南阳市: 'Nanyang',
+  新乡市: 'Xinxiang',
+  株洲市: 'Zhuzhou',
+  湘潭市: 'Xiangtan',
+  衡阳市: 'Hengyang',
+  岳阳市: 'Yueyang',
+  常德市: 'Changde',
+  吉林市: 'Jilin',
+  大庆市: 'Daqing',
+  齐齐哈尔市: 'Qiqihar',
+  包头市: 'Baotou',
+
+  // Autonomous prefectures and other administrative divisions
+  红河哈尼族彝族自治州: 'Honghe',
+  大理白族自治州: 'Dali',
+  西双版纳傣族自治州: 'Xishuangbanna',
+  甘孜藏族自治州: 'Garze',
+  阿坝藏族羌族自治州: 'Aba',
+  凉山彝族自治州: 'Liangshan',
+  延边朝鲜族自治州: 'Yanbian',
+  恩施土家族苗族自治州: 'Enshi',
+  湘西土家族苗族自治州: 'Xiangxi',
+  黔东南苗族侗族自治州: 'Qiandongnan',
+  黔南布依族苗族自治州: 'Qiannan',
+  黔西南布依族苗族自治州: 'Qianxinan',
+  文山壮族苗族自治州: 'Wenshan',
+  楚雄彝族自治州: 'Chuxiong',
+  怒江傈僳族自治州: 'Nujiang',
+  迪庆藏族自治州: 'Diqing',
+  临夏回族自治州: 'Linxia',
+  甘南藏族自治州: 'Gannan',
+  海北藏族自治州: 'Haibei',
+  海南藏族自治州: 'Hainan',
+  黄南藏族自治州: 'Huangnan',
+  果洛藏族自治州: 'Golog',
+  玉树藏族自治州: 'Yushu',
+  海西蒙古族藏族自治州: 'Haixi',
+  昌吉回族自治州: 'Changji',
+  博尔塔拉蒙古自治州: 'Bortala',
+  巴音郭楞蒙古自治州: 'Bayingolin',
+  克孜勒苏柯尔克孜自治州: 'Kizilsu',
+  伊犁哈萨克自治州: 'Ili',
+
+  // International cities
+  哥本哈根: 'Copenhagen',
+};
+
+/**
+ * Translate city name to English for display
+ * Returns the English name if available, otherwise returns the original name
+ */
+export const translateCityName = (cityName: string): string => {
+  // Return as-is if already in English (contains Latin characters)
+  if (/[a-zA-Z]/.test(cityName)) {
+    return cityName;
+  }
+
+  return CITY_NAME_TRANSLATIONS[cityName] || cityName;
+};
+
+/**
+ * Translate country name to English for display
+ * Returns the English name if available, otherwise returns the original name
+ */
+export const translateCountryName = (countryName: string): string => {
+  // Return as-is if already in English (contains Latin characters)
+  if (/[a-zA-Z]/.test(countryName)) {
+    return countryName;
+  }
+
+  return COUNTRY_NAME_TRANSLATIONS[countryName] || countryName;
+};

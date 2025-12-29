@@ -4,37 +4,46 @@ import activities from '@/static/activities.json';
 
 // standardize country names for consistency between mapbox and activities data
 const standardizeCountryName = (country: string): string => {
-  if (country.includes('美利坚合众国')) {
+  // Normalize spacing and variations
+  const normalized = country.replace(/\s*\/\s*/g, '/').trim();
+
+  if (
+    normalized.includes('美利坚合众国') ||
+    normalized.includes('美利堅合眾國')
+  ) {
     return '美国';
   }
-  if (country.includes('英国')) {
+  if (normalized.includes('丹麦') || normalized.includes('丹麥')) {
+    return '丹麦';
+  }
+  if (normalized.includes('英国')) {
     return '英国';
   }
-  if (country.includes('印度尼西亚')) {
+  if (normalized.includes('印度尼西亚')) {
     return '印度尼西亚';
   }
-  if (country.includes('韩国')) {
+  if (normalized.includes('韩国')) {
     return '韩国';
   }
-  if (country.includes('斯里兰卡')) {
+  if (normalized.includes('斯里兰卡')) {
     return '斯里兰卡';
   }
-  if (country.includes('所罗门群岛')) {
+  if (normalized.includes('所罗门群岛')) {
     return '所罗门群岛';
   }
-  if (country.includes('拉脱维亚')) {
+  if (normalized.includes('拉脱维亚')) {
     return '拉脱维亚';
   }
-  if (country.includes('爱沙尼亚')) {
+  if (normalized.includes('爱沙尼亚')) {
     return '爱沙尼亚';
   }
-  if (country.includes('奧地利')) {
+  if (normalized.includes('奧地利')) {
     return '奥地利';
   }
-  if (country.includes('澳大利亚')) {
+  if (normalized.includes('澳大利亚')) {
     return '澳大利亚';
   } else {
-    return country;
+    return normalized;
   }
 };
 
@@ -45,6 +54,7 @@ const useActivities = () => {
     const provinces: Set<string> = new Set();
     const countries: Set<string> = new Set();
     const years: Set<string> = new Set();
+    const countryCities: Record<string, Record<string, number>> = {};
 
     activities.forEach((run) => {
       const location = locationForRun(run);
@@ -62,6 +72,19 @@ const useActivities = () => {
         cities[city] = cities[city]
           ? cities[city] + run.distance
           : run.distance;
+
+        // Group cities by country
+        if (country) {
+          const standardizedCountry = standardizeCountryName(country);
+          if (!countryCities[standardizedCountry]) {
+            countryCities[standardizedCountry] = {};
+          }
+          countryCities[standardizedCountry][city] = countryCities[
+            standardizedCountry
+          ][city]
+            ? countryCities[standardizedCountry][city] + run.distance
+            : run.distance;
+        }
       }
       if (province) provinces.add(province);
       if (country) countries.add(standardizeCountryName(country));
@@ -78,6 +101,7 @@ const useActivities = () => {
       countries: [...countries],
       provinces: [...provinces],
       cities,
+      countryCities,
       runPeriod,
       thisYear,
     };

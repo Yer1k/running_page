@@ -276,6 +276,12 @@ const locationForRun = (
     }
   }
 
+  // Normalize semicolon-separated variants (take first variant only)
+  // This handles data from sync scripts that may include multiple language variants
+  city = city.split(';')[0].trim();
+  province = province.split(';')[0].trim();
+  country = country.split(';')[0].trim();
+
   const r = { country, province, city, coordinate };
   locationCache.set(run.run_id, r);
   return r;

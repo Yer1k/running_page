@@ -135,6 +135,9 @@ export const CITY_NAME_TRANSLATIONS: Record<string, string> = {
 
   // International cities
   哥本哈根: 'Copenhagen',
+  旧金山: 'San Francisco',
+  萨凡纳: 'Savannah',
+  加斯托尼亚: 'Gastonia',
 };
 
 /**

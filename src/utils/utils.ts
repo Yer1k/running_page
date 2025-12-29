@@ -153,6 +153,31 @@ const extractUSCity = (location: string): { city: string; state: string } => {
     }
   }
 
+  // If still no city found, try to map state parks/special locations to nearest cities
+  if (!city) {
+    const locationMappings: Record<string, string> = {
+      'Table Rock State Park': 'Greenville', // Pickens County, SC
+      'Brier Creek': 'Raleigh', // Wake County, NC
+      'Newfound Gap': 'Gatlinburg', // Sevier County, TN
+      'Boone Fork': 'Boone', // Watauga County, NC
+      'Mount Mitchell': 'Burnsville', // Yancey County, NC
+      'Deep Gap': 'Burnsville', // Yancey County, NC
+    };
+
+    for (const [locationName, nearestCity] of Object.entries(
+      locationMappings
+    )) {
+      if (location.includes(locationName)) {
+        city = nearestCity;
+        // Infer state from city if not already set
+        if (!state && CITY_TO_STATE[nearestCity]) {
+          state = CITY_TO_STATE[nearestCity];
+        }
+        break;
+      }
+    }
+  }
+
   return { city, state };
 };
 
@@ -198,9 +223,11 @@ const locationForRun = (
   let [city, province, country] = ['', '', ''];
   let coordinate = null;
   if (location) {
-    // Check if it's a US location first
+    // Check if it's a US location first (check both long and short forms)
     const isUSLocation =
-      location.includes('美利坚合众国') || location.includes('美利堅合眾國');
+      location.includes('美利坚合众国') ||
+      location.includes('美利堅合眾國') ||
+      location.includes('美国');
 
     if (isUSLocation) {
       // Extract US city and state
@@ -247,14 +274,22 @@ const locationForRun = (
         !country.includes('中国') &&
         !country.includes('中華')
       ) {
-        // Find a part with Chinese characters that's not the country
+        // Get list of US state names (Chinese) to skip
+        const usStateNames = Object.keys(US_STATES);
+
+        // Find a part with Chinese characters that's not the country or US state
         for (const part of l) {
           const trimmedPart = part.trim();
+          const isUSState = usStateNames.some((stateName) =>
+            trimmedPart.includes(stateName)
+          );
+
           if (
             trimmedPart &&
             /[\u4e00-\u9fa5]/.test(trimmedPart) &&
             trimmedPart !== country &&
-            !trimmedPart.includes('/') // Skip country variations like "丹麦 / 丹麥"
+            !trimmedPart.includes('/') && // Skip country variations like "丹麦 / 丹麥"
+            !isUSState // Skip US state names like "北卡罗来纳州"
           ) {
             city = trimmedPart;
             break;
@@ -275,6 +310,12 @@ const locationForRun = (
       }
     }
   }
+
+  // Normalize semicolon-separated variants (take first variant only)
+  // This handles data from sync scripts that may include multiple language variants
+  city = city.split(';')[0].trim();
+  province = province.split(';')[0].trim();
+  country = country.split(';')[0].trim();
 
   const r = { country, province, city, coordinate };
   locationCache.set(run.run_id, r);

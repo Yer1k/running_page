@@ -1,5 +1,20 @@
-// Simple city name translations for display purposes only
+// Simple city and country name translations for display purposes only
 // This does not affect internal processing or map highlighting
+
+export const COUNTRY_NAME_TRANSLATIONS: Record<string, string> = {
+  美国: 'United States',
+  中国: 'China',
+  丹麦: 'Denmark',
+  英国: 'United Kingdom',
+  印度尼西亚: 'Indonesia',
+  韩国: 'South Korea',
+  斯里兰卡: 'Sri Lanka',
+  所罗门群岛: 'Solomon Islands',
+  拉脱维亚: 'Latvia',
+  爱沙尼亚: 'Estonia',
+  奥地利: 'Austria',
+  澳大利亚: 'Australia',
+};
 
 export const CITY_NAME_TRANSLATIONS: Record<string, string> = {
   // Municipalities
@@ -133,4 +148,17 @@ export const translateCityName = (cityName: string): string => {
   }
 
   return CITY_NAME_TRANSLATIONS[cityName] || cityName;
+};
+
+/**
+ * Translate country name to English for display
+ * Returns the English name if available, otherwise returns the original name
+ */
+export const translateCountryName = (countryName: string): string => {
+  // Return as-is if already in English (contains Latin characters)
+  if (/[a-zA-Z]/.test(countryName)) {
+    return countryName;
+  }
+
+  return COUNTRY_NAME_TRANSLATIONS[countryName] || countryName;
 };

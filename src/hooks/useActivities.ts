@@ -7,7 +7,10 @@ const standardizeCountryName = (country: string): string => {
   // Normalize spacing and variations
   const normalized = country.replace(/\s*\/\s*/g, '/').trim();
 
-  if (normalized.includes('美利坚合众国') || normalized.includes('美利堅合眾國')) {
+  if (
+    normalized.includes('美利坚合众国') ||
+    normalized.includes('美利堅合眾國')
+  ) {
     return '美国';
   }
   if (normalized.includes('丹麦') || normalized.includes('丹麥')) {
@@ -51,6 +54,7 @@ const useActivities = () => {
     const provinces: Set<string> = new Set();
     const countries: Set<string> = new Set();
     const years: Set<string> = new Set();
+    const countryCities: Record<string, Record<string, number>> = {};
 
     activities.forEach((run) => {
       const location = locationForRun(run);
@@ -68,6 +72,19 @@ const useActivities = () => {
         cities[city] = cities[city]
           ? cities[city] + run.distance
           : run.distance;
+
+        // Group cities by country
+        if (country) {
+          const standardizedCountry = standardizeCountryName(country);
+          if (!countryCities[standardizedCountry]) {
+            countryCities[standardizedCountry] = {};
+          }
+          countryCities[standardizedCountry][city] = countryCities[
+            standardizedCountry
+          ][city]
+            ? countryCities[standardizedCountry][city] + run.distance
+            : run.distance;
+        }
       }
       if (province) provinces.add(province);
       if (country) countries.add(standardizeCountryName(country));
@@ -84,6 +101,7 @@ const useActivities = () => {
       countries: [...countries],
       provinces: [...provinces],
       cities,
+      countryCities,
       runPeriod,
       thisYear,
     };

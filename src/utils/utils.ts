@@ -240,6 +240,28 @@ const locationForRun = (
         [country] = countryMatch;
       }
 
+      // For international locations (not China), extract city from location parts
+      if (
+        !city &&
+        country &&
+        !country.includes('中国') &&
+        !country.includes('中華')
+      ) {
+        // Find a part with Chinese characters that's not the country
+        for (const part of l) {
+          const trimmedPart = part.trim();
+          if (
+            trimmedPart &&
+            /[\u4e00-\u9fa5]/.test(trimmedPart) &&
+            trimmedPart !== country &&
+            !trimmedPart.includes('/') // Skip country variations like "丹麦 / 丹麥"
+          ) {
+            city = trimmedPart;
+            break;
+          }
+        }
+      }
+
       if (MUNICIPALITY_CITIES_ARR.includes(city)) {
         province = city;
         // Keep city as the municipality name instead of splitting into districts

@@ -117,6 +117,9 @@ export const CITY_NAME_TRANSLATIONS: Record<string, string> = {
   巴音郭楞蒙古自治州: 'Bayingolin',
   克孜勒苏柯尔克孜自治州: 'Kizilsu',
   伊犁哈萨克自治州: 'Ili',
+
+  // International cities
+  哥本哈根: 'Copenhagen',
 };
 
 /**

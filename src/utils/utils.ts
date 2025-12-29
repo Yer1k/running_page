@@ -114,7 +114,7 @@ const extractCities = (str: string): string[] => {
   return locations;
 };
 
-// Extract US city from location string (handles Chinese names)
+// Extract US city from location string (handles both Chinese and English names)
 const extractUSCity = (location: string): { city: string; state: string } => {
   let city = '';
   let state = '';
@@ -136,6 +136,20 @@ const extractUSCity = (location: string): { city: string; state: string } => {
         state = CITY_TO_STATE[englishName];
       }
       break;
+    }
+  }
+
+  // If city not found via Chinese name, try English city names
+  if (!city) {
+    for (const [chineseName, englishName] of Object.entries(US_CITIES)) {
+      if (location.includes(englishName)) {
+        city = englishName;
+        // If state not found yet, try to infer from city
+        if (!state && CITY_TO_STATE[englishName]) {
+          state = CITY_TO_STATE[englishName];
+        }
+        break;
+      }
     }
   }
 
@@ -167,6 +181,7 @@ const extractCoordinate = (str: string): [number, number] | null => {
 };
 
 const locationCache = new Map<number, ReturnType<typeof locationForRun>>();
+const cities = chinaCities.map((c) => c.name);
 // what about oversea?
 const locationForRun = (
   run: Activity
@@ -202,7 +217,7 @@ const locationForRun = (
       const provinceMatch = location.match(/[\u4e00-\u9fa5]{2,}(省|自治区)/);
 
       if (cityMatch) {
-        city = chinaCities.find((value) => cityMatch.includes(value)) as string;
+        city = cities.find((value) => cityMatch.includes(value)) as string;
 
         if (!city) {
           city = '';
@@ -227,12 +242,14 @@ const locationForRun = (
 
       if (MUNICIPALITY_CITIES_ARR.includes(city)) {
         province = city;
-        if (location) {
-          const districtMatch = extractDistricts(location);
-          if (districtMatch.length > 0) {
-            city = districtMatch[districtMatch.length - 1];
-          }
-        }
+        // Keep city as the municipality name instead of splitting into districts
+        // This way Shanghai/Beijing/Tianjin/Chongqing appear as single cities
+        // if (location) {
+        //   const districtMatch = extractDistricts(location);
+        //   if (districtMatch.length > 0) {
+        //     city = districtMatch[districtMatch.length - 1];
+        //   }
+        // }
       }
     }
   }

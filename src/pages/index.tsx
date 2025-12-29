@@ -10,7 +10,7 @@ import YearsStat from '@/components/YearsStat';
 import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { useInterval } from '@/hooks/useInterval';
-import { ENABLE_LOCATION_FEATURES } from '@/utils/const';
+import { IS_CHINESE } from '@/utils/const';
 import {
   Activity,
   IViewState,
@@ -280,13 +280,16 @@ const Index = () => {
   );
 
   // Auto locate activity when singleRunId is set and activities are loaded
+  // First, detect the run's year and switch to it if needed
   useEffect(() => {
     if (singleRunId !== null && activities.length > 0) {
-      // Check if the run exists in our activities
-      const runExists = activities.some((run) => run.run_id === singleRunId);
-      if (runExists) {
-        // Automatically simulate clicking the single run
-        locateActivity([singleRunId]);
+      const targetRun = activities.find((run) => run.run_id === singleRunId);
+      if (targetRun) {
+        const runYear = targetRun.start_date_local.slice(0, 4);
+        if (year !== runYear) {
+          setYear(runYear);
+          setCurrentFilter({ item: runYear, func: filterYearRuns });
+        }
       } else {
         // If run doesn't exist, clear the hash and show a warning
         console.warn(`Run with ID ${singleRunId} not found in activities`);
@@ -294,20 +297,35 @@ const Index = () => {
         setSingleRunId(null);
       }
     }
-  }, [singleRunId, activities, locateActivity]);
+  }, [singleRunId, activities]);
+
+  useEffect(() => {
+    if (singleRunId !== null && runs.length > 0) {
+      const runExistsInCurrentRuns = runs.some(
+        (run) => run.run_id === singleRunId
+      );
+      if (runExistsInCurrentRuns) {
+        locateActivity([singleRunId]);
+      }
+    }
+  }, [runs, singleRunId, locateActivity]);
 
   // Update bounds when geoData changes
   useEffect(() => {
-    setViewState((prev) => ({
-      ...prev,
-      ...bounds,
-    }));
-  }, [bounds]);
+    if (singleRunId === null) {
+      setViewState((prev) => ({
+        ...prev,
+        ...bounds,
+      }));
+    }
+  }, [bounds, singleRunId]);
 
   // Animate geoData when runs change
   useEffect(() => {
-    startAnimation(runs);
-  }, [runs, startAnimation]);
+    if (singleRunId === null) {
+      startAnimation(runs);
+    }
+  }, [runs, startAnimation, singleRunId]);
 
   useEffect(() => {
     if (year !== 'Total') {
@@ -379,7 +397,7 @@ const Index = () => {
         <h1 className="my-12 mt-6 text-5xl font-extrabold italic">
           <a href={siteUrl}>{siteTitle}</a>
         </h1>
-        {(viewState.zoom ?? 0) <= 3 && ENABLE_LOCATION_FEATURES ? (
+        {(viewState.zoom ?? 0) <= 3 && IS_CHINESE ? (
           <LocationStat
             changeYear={changeYear}
             changeCity={changeCity}

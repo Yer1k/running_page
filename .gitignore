@@ -32,7 +32,6 @@ run_page/data.db
 # json
 imported.json
 package-lock.json
-```
 
 # README Preview
 README_files/
@@ -47,3 +46,5 @@ __pycache__
 
 # Claude instructions
 CLAUDE.md
+
+.env

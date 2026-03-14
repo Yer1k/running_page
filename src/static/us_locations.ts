@@ -120,6 +120,8 @@ export const US_CITIES: Record<string, string> = {
   塔尔萨: 'Tulsa',
   阿灵顿: 'Arlington',
   新奥尔良: 'New Orleans',
+  // Texas cities without common Chinese names
+  弗里斯科: 'Frisco',
 };
 
 // City to state mapping (English names)
@@ -181,4 +183,5 @@ export const CITY_TO_STATE: Record<string, string> = {
   Tulsa: 'Oklahoma',
   Arlington: 'Texas',
   'New Orleans': 'Louisiana',
+  Frisco: 'Texas',
 };
